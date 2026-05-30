@@ -1,0 +1,23 @@
+kctx serve has been deployed.
+
+Release:   {{ .Release.Name }}
+Namespace: {{ .Release.Namespace }}
+Service:   {{ include "kctx.fullname" . }}
+
+Render and apply without Helm release state:
+  helm template {{ .Release.Name }} ./chart --namespace {{ .Release.Namespace }} --set namespace.create=true | kubectl apply -f -
+
+{{- if eq .Values.service.type "NodePort" }}
+NodePort service:
+  kubectl get svc {{ include "kctx.fullname" . }} --namespace {{ .Release.Namespace }}
+{{- else if eq .Values.service.type "LoadBalancer" }}
+LoadBalancer service:
+  kubectl get svc {{ include "kctx.fullname" . }} --namespace {{ .Release.Namespace }}
+{{- else }}
+Port-forward locally:
+  kubectl port-forward --namespace {{ .Release.Namespace }} svc/{{ include "kctx.fullname" . }} 8080:{{ .Values.service.port }}
+
+Then try:
+  curl http://localhost:8080/healthz
+  curl http://localhost:8080/version
+{{- end }}
