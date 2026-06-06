@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kctx.io/schemas/v1alpha1/common.schema.json",
+  "title": "kctx common v1alpha1 types",
+  "$defs": {
+    "schemaVersion": {
+      "const": "kctx.io/v1alpha1"
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "entity": {
+      "type": "object",
+      "required": ["kind", "name"],
+      "properties": {
+        "id": { "type": "string" },
+        "apiVersion": { "type": "string" },
+        "kind": { "type": "string", "minLength": 1 },
+        "namespace": { "type": "string" },
+        "name": { "type": "string", "minLength": 1 },
+        "uid": { "type": "string" },
+        "labels": { "$ref": "#/$defs/labels" },
+        "status": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "signal": {
+      "type": "object",
+      "required": ["severity", "reason", "message"],
+      "properties": {
+        "severity": { "enum": ["info", "warning", "error"] },
+        "reason": { "type": "string", "minLength": 1 },
+        "message": { "type": "string" },
+        "source": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "relation": {
+      "type": "object",
+      "required": ["type", "source", "target"],
+      "properties": {
+        "type": { "type": "string", "minLength": 1 },
+        "source": { "$ref": "#/$defs/entity" },
+        "target": { "$ref": "#/$defs/entity" },
+        "confidence": { "type": "string" },
+        "reason": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

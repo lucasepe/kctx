@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kctx.io/schemas/v1alpha1/resource-context.schema.json",
+  "title": "kctx ResourceContext v1alpha1",
+  "type": "object",
+  "required": ["schemaVersion", "kind"],
+  "properties": {
+    "schemaVersion": { "const": "kctx.io/v1alpha1" },
+    "kind": { "enum": ["ResourceContext", "DynamicResourceContext"] },
+    "resolved": { "type": "object" },
+    "pod": { "type": "object" },
+    "resource": { "type": "object" },
+    "status": { "type": "object" },
+    "owners": { "type": "array" },
+    "related": { "type": "array" },
+    "relations": { "type": "array" },
+    "signals": { "type": "array" }
+  },
+  "additionalProperties": true
+}

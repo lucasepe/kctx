@@ -1,0 +1,49 @@
+{
+  "endpoints": [],
+  "kind": "ServiceTrace",
+  "owners": [],
+  "pods": [],
+  "ports": [
+    {
+      "name": "http",
+      "port": 80,
+      "protocol": "TCP",
+      "targetPort": "8080"
+    }
+  ],
+  "relations": [],
+  "schemaVersion": "kctx.io/v1alpha1",
+  "selector": {
+    "app": "no-pod-should-match-this-selector"
+  },
+  "service": {
+    "clusterIP": "\u003ccluster-ip\u003e",
+    "kind": "Service",
+    "labels": {
+      "app": "kctx-golden"
+    },
+    "name": "kctx-orphan-service",
+    "namespace": "kctx-e2e-golden",
+    "type": "ClusterIP"
+  },
+  "signals": [
+    {
+      "message": "service kctx-e2e-golden/kctx-orphan-service has no endpoints",
+      "reason": "no_endpoints_found",
+      "severity": "warning",
+      "source": "endpoints"
+    },
+    {
+      "message": "service kctx-e2e-golden/kctx-orphan-service has no ready endpoints",
+      "reason": "service_has_no_usable_backends",
+      "severity": "error",
+      "source": "endpoints"
+    },
+    {
+      "message": "service kctx-e2e-golden/kctx-orphan-service selector matches no pods",
+      "reason": "selector_matches_no_pods",
+      "severity": "warning",
+      "source": "selector"
+    }
+  ]
+}

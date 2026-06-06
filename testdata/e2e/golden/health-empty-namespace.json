@@ -1,0 +1,32 @@
+{
+  "events": [],
+  "kind": "NamespaceHealth",
+  "namespace": "kctx-e2e-golden-empty",
+  "pods": [],
+  "pvcs": [],
+  "schemaVersion": "kctx.io/v1alpha1",
+  "services": [],
+  "signals": [
+    {
+      "message": "namespace kctx-e2e-golden-empty has no supported resources",
+      "reason": "namespace_empty",
+      "severity": "info"
+    }
+  ],
+  "summary": {
+    "errorSignals": 0,
+    "podsNotReady": 0,
+    "podsReady": 0,
+    "podsRestarting": 0,
+    "podsTotal": 0,
+    "pvcsPending": 0,
+    "pvcsTotal": 0,
+    "servicesTotal": 0,
+    "servicesWithoutEndpoints": 0,
+    "warningEvents": 0,
+    "workloadsHealthy": 0,
+    "workloadsTotal": 0,
+    "workloadsUnhealthy": 0
+  },
+  "workloads": []
+}

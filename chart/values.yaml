@@ -1,0 +1,64 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/lucasepe/kctx
+  tag: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+namespace:
+  create: false
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+rbac:
+  create: true
+  clusterWide: true
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+
+env:
+  listenAddr: ":8080"
+  requestTimeout: "30s"
+  kubeAPIBudget: 100
+  verbose: false
+
+containerPort: 8080
+
+service:
+  type: ClusterIP
+  port: 8080
+  nodePort: null
+
+resources: {}
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 2
+  periodSeconds: 5
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

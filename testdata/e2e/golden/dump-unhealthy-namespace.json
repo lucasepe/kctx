@@ -1,0 +1,211 @@
+{
+  "entities": [
+    {
+      "id": "ConfigMap/kctx-e2e-golden/kctx-config",
+      "kind": "ConfigMap",
+      "labels": {
+        "app": "kctx-golden"
+      },
+      "name": "kctx-config",
+      "namespace": "kctx-e2e-golden",
+      "uid": "\u003cuid\u003e"
+    },
+    {
+      "id": "ConfigMap/kctx-e2e-golden/kube-root-ca.crt",
+      "kind": "ConfigMap",
+      "name": "kube-root-ca.crt",
+      "namespace": "kctx-e2e-golden",
+      "uid": "\u003cuid\u003e"
+    },
+    {
+      "id": "EndpointSlice/kctx-e2e-golden/kctx-orphan-service-\u003csuffix\u003e",
+      "kind": "EndpointSlice",
+      "labels": {
+        "app": "kctx-golden",
+        "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+        "kubernetes.io/service-name": "kctx-orphan-service"
+      },
+      "name": "kctx-orphan-service-\u003csuffix\u003e",
+      "namespace": "kctx-e2e-golden",
+      "status": "IPv4",
+      "uid": "\u003cuid\u003e"
+    },
+    {
+      "id": "Namespace/kctx-e2e-golden",
+      "kind": "Namespace",
+      "labels": {
+        "kubernetes.io/metadata.name": "kctx-e2e-golden"
+      },
+      "name": "kctx-e2e-golden",
+      "status": "Active",
+      "uid": "\u003cuid\u003e"
+    },
+    {
+      "id": "Node/kctx-lab-control-plane",
+      "kind": "Node",
+      "labels": {
+        "beta.kubernetes.io/arch": "arm64",
+        "beta.kubernetes.io/os": "linux",
+        "kubernetes.io/arch": "arm64",
+        "kubernetes.io/hostname": "kctx-lab-control-plane",
+        "kubernetes.io/os": "linux",
+        "node-role.kubernetes.io/control-plane": ""
+      },
+      "name": "kctx-lab-control-plane",
+      "status": "True",
+      "uid": "\u003cuid\u003e"
+    },
+    {
+      "id": "PersistentVolumeClaim/kctx-e2e-golden/kctx-pending-pvc",
+      "kind": "PersistentVolumeClaim",
+      "name": "kctx-pending-pvc",
+      "namespace": "kctx-e2e-golden",
+      "status": "Pending",
+      "uid": "\u003cuid\u003e"
+    },
+    {
+      "id": "Pod/kctx-e2e-golden/kctx-bad-image-pod",
+      "kind": "Pod",
+      "labels": {
+        "app": "kctx-bad-image",
+        "example.com/token": "[REDACTED]"
+      },
+      "name": "kctx-bad-image-pod",
+      "namespace": "kctx-e2e-golden",
+      "nodeName": "kctx-lab-control-plane",
+      "ready": false,
+      "status": "ErrImagePull",
+      "uid": "\u003cuid\u003e"
+    },
+    {
+      "id": "Secret/kctx-e2e-golden/kctx-secret",
+      "kind": "Secret",
+      "labels": {
+        "app": "kctx-golden",
+        "example.com/token": "[REDACTED]"
+      },
+      "name": "kctx-secret",
+      "namespace": "kctx-e2e-golden",
+      "status": "Opaque",
+      "uid": "\u003cuid\u003e"
+    },
+    {
+      "id": "Service/kctx-e2e-golden/kctx-orphan-service",
+      "kind": "Service",
+      "labels": {
+        "app": "kctx-golden"
+      },
+      "name": "kctx-orphan-service",
+      "namespace": "kctx-e2e-golden",
+      "status": "ClusterIP",
+      "uid": "\u003cuid\u003e"
+    }
+  ],
+  "events": [
+    {
+      "message": "\u003cimage-pull-message\u003e",
+      "objectKind": "Pod",
+      "objectName": "kctx-bad-image-pod",
+      "reason": "Failed",
+      "timestamp": "\u003ctimestamp\u003e",
+      "type": "Warning"
+    },
+    {
+      "message": "\u003cimage-pull-message\u003e",
+      "objectKind": "Pod",
+      "objectName": "kctx-bad-image-pod",
+      "reason": "Failed",
+      "timestamp": "\u003ctimestamp\u003e",
+      "type": "Warning"
+    },
+    {
+      "message": "\u003cimage-pull-message\u003e",
+      "objectKind": "Pod",
+      "objectName": "kctx-bad-image-pod",
+      "reason": "Failed",
+      "timestamp": "\u003ctimestamp\u003e",
+      "type": "Warning"
+    }
+  ],
+  "generatedAt": "\u003ctimestamp\u003e",
+  "kind": "NamespaceDump",
+  "namespace": "kctx-e2e-golden",
+  "relations": [
+    {
+      "source": "Pod/kctx-e2e-golden/kctx-bad-image-pod",
+      "target": "ConfigMap/kctx-e2e-golden/kctx-config",
+      "type": "uses_configmap"
+    },
+    {
+      "source": "Pod/kctx-e2e-golden/kctx-bad-image-pod",
+      "target": "Node/kctx-lab-control-plane",
+      "type": "scheduled_on"
+    },
+    {
+      "source": "Pod/kctx-e2e-golden/kctx-bad-image-pod",
+      "target": "Secret/kctx-e2e-golden/kctx-secret",
+      "type": "uses_secret"
+    },
+    {
+      "source": "Service/kctx-e2e-golden/kctx-orphan-service",
+      "target": "EndpointSlice/kctx-e2e-golden/kctx-orphan-service-\u003csuffix\u003e",
+      "type": "has_endpoint"
+    }
+  ],
+  "schemaVersion": "kctx.io/v1alpha1",
+  "signals": [
+    {
+      "entityId": "PersistentVolumeClaim/kctx-e2e-golden/kctx-pending-pvc",
+      "message": "PVC kctx-e2e-golden/kctx-pending-pvc is Pending",
+      "reason": "pvc_pending",
+      "severity": "warning"
+    },
+    {
+      "entityId": "Pod/kctx-e2e-golden/kctx-bad-image-pod",
+      "message": "Pod kctx-e2e-golden/kctx-bad-image-pod is not Ready",
+      "reason": "pod_not_ready",
+      "severity": "warning"
+    },
+    {
+      "entityId": "Pod/kctx-e2e-golden/kctx-bad-image-pod",
+      "message": "\u003cimage-pull-message\u003e",
+      "reason": "image_pull_error",
+      "severity": "error"
+    },
+    {
+      "entityId": "Service/kctx-e2e-golden/kctx-orphan-service",
+      "message": "Service kctx-e2e-golden/kctx-orphan-service has no ready endpoints",
+      "reason": "service_without_ready_endpoints",
+      "severity": "warning"
+    },
+    {
+      "message": "\u003cimage-pull-message\u003e",
+      "reason": "failed_warning_events",
+      "severity": "warning"
+    },
+    {
+      "message": "\u003cimage-pull-message\u003e",
+      "reason": "failed_warning_events",
+      "severity": "warning"
+    },
+    {
+      "message": "\u003cimage-pull-message\u003e",
+      "reason": "failed_warning_events",
+      "severity": "warning"
+    }
+  ],
+  "summary": {
+    "cronJobs": 0,
+    "daemonSets": 0,
+    "deployments": 0,
+    "endpointSlices": 1,
+    "jobs": 0,
+    "nodes": 1,
+    "pods": 1,
+    "pvcs": 1,
+    "services": 1,
+    "signals": 7,
+    "statefulSets": 0,
+    "warningEvents": 3
+  }
+}

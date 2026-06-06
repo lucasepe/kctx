@@ -1,0 +1,106 @@
+{
+  "events": [
+    {
+      "kind": "Pod",
+      "message": "\u003cimage-pull-message\u003e",
+      "name": "kctx-bad-image-pod",
+      "reason": "Failed",
+      "timestamp": "\u003ctimestamp\u003e",
+      "type": "Warning"
+    },
+    {
+      "kind": "Pod",
+      "message": "\u003cimage-pull-message\u003e",
+      "name": "kctx-bad-image-pod",
+      "reason": "Failed",
+      "timestamp": "\u003ctimestamp\u003e",
+      "type": "Warning"
+    },
+    {
+      "kind": "Pod",
+      "message": "\u003cimage-pull-message\u003e",
+      "name": "kctx-bad-image-pod",
+      "reason": "Failed",
+      "timestamp": "\u003ctimestamp\u003e",
+      "type": "Warning"
+    }
+  ],
+  "kind": "NamespaceHealth",
+  "namespace": "kctx-e2e-golden",
+  "pods": [
+    {
+      "name": "kctx-bad-image-pod",
+      "namespace": "kctx-e2e-golden",
+      "node": "kctx-lab-control-plane",
+      "phase": "Pending",
+      "ready": false,
+      "reason": "ErrImagePull",
+      "restarts": 0
+    }
+  ],
+  "pvcs": [
+    {
+      "name": "kctx-pending-pvc",
+      "namespace": "kctx-e2e-golden",
+      "phase": "Pending"
+    }
+  ],
+  "schemaVersion": "kctx.io/v1alpha1",
+  "services": [
+    {
+      "name": "kctx-orphan-service",
+      "namespace": "kctx-e2e-golden",
+      "readyEndpoints": 0,
+      "totalEndpoints": 0,
+      "type": "ClusterIP"
+    }
+  ],
+  "signals": [
+    {
+      "message": "PVC kctx-e2e-golden/kctx-pending-pvc is Pending",
+      "reason": "pvc_pending",
+      "severity": "warning",
+      "source": "PersistentVolumeClaim/kctx-e2e-golden/kctx-pending-pvc"
+    },
+    {
+      "message": "Pod kctx-e2e-golden/kctx-bad-image-pod is not Ready",
+      "reason": "pod_not_ready",
+      "severity": "warning",
+      "source": "Pod/kctx-e2e-golden/kctx-bad-image-pod"
+    },
+    {
+      "message": "Service kctx-e2e-golden/kctx-orphan-service has no ready endpoints",
+      "reason": "service_without_ready_endpoints",
+      "severity": "warning",
+      "source": "Service/kctx-e2e-golden/kctx-orphan-service"
+    },
+    {
+      "message": "\u003cimage-pull-message\u003e",
+      "reason": "failed_warning_events",
+      "severity": "warning",
+      "source": "Pod/kctx-bad-image-pod"
+    },
+    {
+      "message": "\u003cimage-pull-message\u003e",
+      "reason": "pod_image_pull_error",
+      "severity": "error",
+      "source": "Pod/kctx-e2e-golden/kctx-bad-image-pod"
+    }
+  ],
+  "summary": {
+    "errorSignals": 1,
+    "podsNotReady": 1,
+    "podsReady": 0,
+    "podsRestarting": 0,
+    "podsTotal": 1,
+    "pvcsPending": 1,
+    "pvcsTotal": 1,
+    "servicesTotal": 1,
+    "servicesWithoutEndpoints": 1,
+    "warningEvents": 3,
+    "workloadsHealthy": 0,
+    "workloadsTotal": 0,
+    "workloadsUnhealthy": 0
+  },
+  "workloads": []
+}

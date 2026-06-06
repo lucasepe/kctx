@@ -1,0 +1,8 @@
+{
+  "error": {
+    "code": "forbidden",
+    "message": "pods is forbidden: User \"system:serviceaccount:kctx-e2e-golden-rbac:kctx-golden-denied\" cannot list resource \"pods\" in API group \"\" in the namespace \"default\""
+  },
+  "kind": "Error",
+  "schemaVersion": "kctx.io/v1alpha1"
+}

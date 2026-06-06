@@ -1,0 +1,183 @@
+{
+  "events": [
+    {
+      "count": 1,
+      "firstTimestamp": "\u003ctimestamp\u003e",
+      "lastTimestamp": "\u003ctimestamp\u003e",
+      "message": "\u003cimage-pull-message\u003e",
+      "reason": "Failed",
+      "source": "kubelet",
+      "type": "Warning"
+    },
+    {
+      "count": 1,
+      "firstTimestamp": "\u003ctimestamp\u003e",
+      "lastTimestamp": "\u003ctimestamp\u003e",
+      "message": "\u003cimage-pull-message\u003e",
+      "reason": "Failed",
+      "source": "kubelet",
+      "type": "Warning"
+    },
+    {
+      "count": 1,
+      "firstTimestamp": "\u003ctimestamp\u003e",
+      "lastTimestamp": "\u003ctimestamp\u003e",
+      "message": "\u003cimage-pull-message\u003e",
+      "reason": "Failed",
+      "source": "kubelet",
+      "type": "Warning"
+    }
+  ],
+  "kind": "PodContext",
+  "node": {
+    "kind": "Node",
+    "name": "kctx-lab-control-plane"
+  },
+  "owners": [],
+  "pod": {
+    "apiVersion": "v1",
+    "id": "Pod/kctx-e2e-golden/kctx-bad-image-pod",
+    "kind": "Pod",
+    "labels": {
+      "app": "kctx-bad-image",
+      "example.com/token": "[REDACTED]"
+    },
+    "name": "kctx-bad-image-pod",
+    "namespace": "kctx-e2e-golden",
+    "uid": "\u003cuid\u003e"
+  },
+  "relations": [
+    {
+      "source": {
+        "apiVersion": "v1",
+        "id": "Pod/kctx-e2e-golden/kctx-bad-image-pod",
+        "kind": "Pod",
+        "labels": {
+          "app": "kctx-bad-image",
+          "example.com/token": "[REDACTED]"
+        },
+        "name": "kctx-bad-image-pod",
+        "namespace": "kctx-e2e-golden",
+        "uid": "\u003cuid\u003e"
+      },
+      "target": {
+        "kind": "ConfigMap",
+        "name": "kctx-config",
+        "namespace": "kctx-e2e-golden"
+      },
+      "type": "uses_configmap"
+    },
+    {
+      "source": {
+        "apiVersion": "v1",
+        "id": "Pod/kctx-e2e-golden/kctx-bad-image-pod",
+        "kind": "Pod",
+        "labels": {
+          "app": "kctx-bad-image",
+          "example.com/token": "[REDACTED]"
+        },
+        "name": "kctx-bad-image-pod",
+        "namespace": "kctx-e2e-golden",
+        "uid": "\u003cuid\u003e"
+      },
+      "target": {
+        "kind": "Node",
+        "name": "kctx-lab-control-plane"
+      },
+      "type": "scheduled_on"
+    },
+    {
+      "source": {
+        "apiVersion": "v1",
+        "id": "Pod/kctx-e2e-golden/kctx-bad-image-pod",
+        "kind": "Pod",
+        "labels": {
+          "app": "kctx-bad-image",
+          "example.com/token": "[REDACTED]"
+        },
+        "name": "kctx-bad-image-pod",
+        "namespace": "kctx-e2e-golden",
+        "uid": "\u003cuid\u003e"
+      },
+      "target": {
+        "kind": "Secret",
+        "name": "kctx-secret",
+        "namespace": "kctx-e2e-golden"
+      },
+      "type": "uses_secret"
+    }
+  ],
+  "schemaVersion": "kctx.io/v1alpha1",
+  "services": [],
+  "signals": [
+    {
+      "message": "\u003cimage-pull-message\u003e",
+      "reason": "failed_warning_events",
+      "severity": "warning",
+      "source": "event"
+    },
+    {
+      "message": "\u003cimage-pull-message\u003e",
+      "reason": "image_pull_error",
+      "severity": "error",
+      "source": "status"
+    },
+    {
+      "message": "pod is not ready",
+      "reason": "pod_not_ready",
+      "severity": "warning",
+      "source": "status"
+    }
+  ],
+  "status": {
+    "conditions": [
+      {
+        "message": "containers with unready status: [app]",
+        "reason": "ContainersNotReady",
+        "status": "False",
+        "type": "ContainersReady"
+      },
+      {
+        "message": "containers with unready status: [app]",
+        "reason": "ContainersNotReady",
+        "status": "False",
+        "type": "Ready"
+      },
+      {
+        "status": "True",
+        "type": "Initialized"
+      },
+      {
+        "status": "True",
+        "type": "PodReadyToStartContainers"
+      },
+      {
+        "status": "True",
+        "type": "PodScheduled"
+      }
+    ],
+    "containers": [
+      {
+        "message": "\u003cimage-pull-message\u003e",
+        "name": "app",
+        "ready": false,
+        "reason": "ErrImagePull",
+        "restartCount": 0,
+        "state": "waiting"
+      }
+    ],
+    "phase": "Pending",
+    "ready": false,
+    "restarts": 0
+  },
+  "volumes": [
+    {
+      "name": "kctx-config",
+      "type": "ConfigMap"
+    },
+    {
+      "name": "kctx-secret",
+      "type": "Secret"
+    }
+  ]
+}

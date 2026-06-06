@@ -1,0 +1,8 @@
+{
+  "error": {
+    "code": "not_found",
+    "message": "pods \"kctx-pod-does-not-exist\" not found"
+  },
+  "kind": "Error",
+  "schemaVersion": "kctx.io/v1alpha1"
+}

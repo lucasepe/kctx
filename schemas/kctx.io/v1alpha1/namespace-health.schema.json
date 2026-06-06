@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kctx.io/schemas/v1alpha1/namespace-health.schema.json",
+  "title": "kctx NamespaceHealth v1alpha1",
+  "type": "object",
+  "required": ["schemaVersion", "kind", "namespace", "summary", "workloads", "pods", "services", "pvcs", "events", "signals"],
+  "properties": {
+    "schemaVersion": { "const": "kctx.io/v1alpha1" },
+    "kind": { "const": "NamespaceHealth" },
+    "namespace": { "type": "string" },
+    "summary": { "type": "object" },
+    "workloads": { "type": "array" },
+    "pods": { "type": "array" },
+    "services": { "type": "array" },
+    "pvcs": { "type": "array" },
+    "events": { "type": "array" },
+    "signals": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/signal" } }
+  },
+  "additionalProperties": true
+}

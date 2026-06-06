@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kctx.io/schemas/v1alpha1/namespace-dump.schema.json",
+  "title": "kctx NamespaceDump v1alpha1",
+  "type": "object",
+  "required": ["schemaVersion", "kind", "generatedAt", "namespace", "summary", "entities", "relations", "signals", "events"],
+  "properties": {
+    "schemaVersion": { "const": "kctx.io/v1alpha1" },
+    "kind": { "const": "NamespaceDump" },
+    "generatedAt": { "type": "string" },
+    "namespace": { "type": "string" },
+    "summary": { "type": "object" },
+    "entities": { "type": "array" },
+    "relations": { "type": "array" },
+    "signals": { "type": "array" },
+    "events": { "type": "array" }
+  },
+  "additionalProperties": true
+}

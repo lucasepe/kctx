@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kctx.io/schemas/v1alpha1/error.schema.json",
+  "title": "kctx Error v1alpha1",
+  "type": "object",
+  "required": ["schemaVersion", "kind", "error"],
+  "properties": {
+    "schemaVersion": { "const": "kctx.io/v1alpha1" },
+    "kind": { "const": "Error" },
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "enum": [
+            "bad_request",
+            "not_found",
+            "forbidden",
+            "method_not_allowed",
+            "unsupported_resource",
+            "timeout",
+            "limit_exceeded",
+            "client_closed_request",
+            "internal_error"
+          ]
+        },
+        "message": { "type": "string" },
+        "details": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

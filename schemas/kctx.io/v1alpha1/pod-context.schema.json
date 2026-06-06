@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kctx.io/schemas/v1alpha1/pod-context.schema.json",
+  "title": "kctx PodContext v1alpha1",
+  "type": "object",
+  "required": ["schemaVersion", "kind", "pod", "status", "owners", "services", "volumes", "events", "signals", "relations"],
+  "properties": {
+    "schemaVersion": { "const": "kctx.io/v1alpha1" },
+    "kind": { "const": "PodContext" },
+    "pod": { "$ref": "common.schema.json#/$defs/entity" },
+    "status": { "type": "object" },
+    "owners": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/entity" } },
+    "services": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/entity" } },
+    "volumes": { "type": "array" },
+    "events": { "type": "array" },
+    "signals": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/signal" } },
+    "relations": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/relation" } }
+  },
+  "additionalProperties": true
+}

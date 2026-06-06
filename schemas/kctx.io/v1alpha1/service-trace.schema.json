@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kctx.io/schemas/v1alpha1/service-trace.schema.json",
+  "title": "kctx ServiceTrace v1alpha1",
+  "type": "object",
+  "required": ["schemaVersion", "kind", "service", "ports", "endpoints", "pods", "owners", "relations", "signals"],
+  "properties": {
+    "schemaVersion": { "const": "kctx.io/v1alpha1" },
+    "kind": { "const": "ServiceTrace" },
+    "service": { "type": "object" },
+    "selector": { "type": "object" },
+    "ports": { "type": "array" },
+    "endpoints": { "type": "array" },
+    "pods": { "type": "array" },
+    "owners": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/entity" } },
+    "relations": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/relation" } },
+    "signals": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/signal" } }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kctx.io/schemas/v1alpha1/graph.schema.json",
+  "title": "kctx Graph v1alpha1",
+  "type": "object",
+  "required": ["schemaVersion", "kind", "nodes", "edges"],
+  "properties": {
+    "schemaVersion": { "const": "kctx.io/v1alpha1" },
+    "kind": { "enum": ["PodGraph", "ResourceGraph"] },
+    "nodes": { "type": "array" },
+    "edges": { "type": "array" }
+  },
+  "additionalProperties": true
+}
