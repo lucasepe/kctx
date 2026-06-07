@@ -20,9 +20,6 @@
 # Goreleaser builds
 **/dist/**
 
-# Generated book artifacts
-book/**
-
 # This is my wip ideas folder
 experiments/**
 wip/**

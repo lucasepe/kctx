@@ -147,7 +147,7 @@ The current adapter set covers Argo CD `Application`, Argo CD `AppProject`, and 
 
 ## Documentation
 
-The long-form documentation is organized as a PDF ebook .
+The long-form documentation is organized as a [PDF eBook](docs/kctx.pdf).
 
 ## Project Status
 
