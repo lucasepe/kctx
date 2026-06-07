@@ -149,6 +149,16 @@ The current adapter set covers Argo CD `Application`, Argo CD `AppProject`, and 
 
 The long-form documentation is organized as a [PDF eBook](docs/kctx.pdf).
 
+## Support
+
+If `kctx` saves you time when debugging Kubernetes workloads, consider supporting
+its maintenance:
+
+- PayPal: <https://paypal.me/lucasepe71>
+
+Support helps fund release work, compatibility testing, documentation, and
+ongoing Kubernetes, Argo CD, and cert-manager integration maintenance.
+
 ## Project Status
 
 `kctx` is under active development. It is already useful as a read-only Kubernetes context tool, but production hardening is still in progress.

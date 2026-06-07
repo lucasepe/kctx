@@ -34,6 +34,17 @@ readable as historical design intent and acceptance criteria. When an item is
 fully done, mark the checklist entry with `[x]` and change the section status to
 `Complete`, optionally adding a short implementation note.
 
+## Sustainability
+
+Sponsorships and donations support ongoing maintenance work that is easy to
+underestimate but important for a tool like `kctx`: release automation,
+Kubernetes compatibility testing, adapter maintenance, documentation, issue
+triage, and production-hardening work.
+
+Funding does not imply a paid support contract, an SLA, or priority access to
+private operational advice. Those can be introduced later if the project grows
+enough to justify them.
+
 ## 1. Versioned JSON Contract
 
 Status: **Complete.** `schemaVersion: "kctx.io/v1alpha1"` and top-level `kind`
