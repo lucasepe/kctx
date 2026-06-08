@@ -83,6 +83,36 @@ For local development:
 go run . health namespace default
 ```
 
+### Install `kctx serve` With Helm
+
+Install the in-cluster read-only HTTP server from a packaged release chart:
+
+```bash
+VERSION=0.2.0
+helm upgrade --install kctx \
+  "https://github.com/lucasepe/kctx/releases/download/v${VERSION}/kctx-${VERSION}.tgz" \
+  --namespace kctx-system \
+  --create-namespace
+```
+
+Then expose it locally:
+
+```bash
+kubectl -n kctx-system port-forward svc/kctx 8080:8080
+curl http://localhost:8080/health/namespace/default
+```
+
+From a source checkout, install the local chart and choose the image tag to run:
+
+```bash
+helm upgrade --install kctx ./chart \
+  --namespace kctx-system \
+  --create-namespace \
+  --set image.tag=dev
+```
+
+See [chart/README.md](chart/README.md) for chart values, local kind setup, and NodePort examples.
+
 ## Commands
 
 `kctx explain`
