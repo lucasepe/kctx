@@ -154,6 +154,7 @@ The long-form documentation is organized as a [PDF eBook](docs/kctx.pdf).
 If `kctx` saves you time when debugging Kubernetes workloads, consider supporting
 its maintenance:
 
+- GitHub Sponsors: <https://github.com/sponsors/lucasepe>
 - PayPal: <https://paypal.me/lucasepe71>
 
 Support helps fund release work, compatibility testing, documentation, and
