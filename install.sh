@@ -85,9 +85,11 @@ fi
 
 # Choose install path
 INSTALL_DIR="/usr/local/bin"
+USED_FALLBACK=0
 if [ ! -w "$INSTALL_DIR" ]; then
   echo "⚠️  No write permission to $INSTALL_DIR. Falling back to \$HOME/.local/bin"
   INSTALL_DIR="$HOME/.local/bin"
+  USED_FALLBACK=1
   mkdir -p "$INSTALL_DIR"
   echo "👉 Make sure $INSTALL_DIR is in your PATH"
 fi
@@ -107,3 +109,13 @@ mv "$BIN_PATH" "$INSTALL_DIR/$BINARY"
 rm -rf "$ASSET" "$TMP_DIR"
 
 echo "✅ $BINARY $VERSION installed successfully!"
+
+if [[ "$USED_FALLBACK" == "1" ]] && ! command -v "$BINARY" >/dev/null 2>&1; then
+  echo
+  echo "Add this directory to your PATH to run '$BINARY' from any shell:"
+  echo "  export PATH=\"$INSTALL_DIR:\$PATH\""
+  echo
+  echo "For zsh, you can persist it with:"
+  echo "  echo 'export PATH=\"$INSTALL_DIR:\$PATH\"' >> ~/.zshrc"
+  echo "  source ~/.zshrc"
+fi
