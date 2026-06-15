@@ -58,12 +58,6 @@ It does not mutate resources, restart workloads, apply manifests, or guess root 
 Install the CLI:
 
 ```bash
-./install.sh
-```
-
-Or install from the published release script:
-
-```bash
 curl -fsSL https://raw.githubusercontent.com/lucasepe/kctx/main/install.sh | bash
 ```
 
@@ -77,18 +71,13 @@ kctx graph pod <pod-name> --namespace default
 kctx dump namespace default
 ```
 
-For local development:
-
-```bash
-go run . health namespace default
-```
 
 ### Install `kctx serve` With Helm
 
 Install the in-cluster read-only HTTP server from a packaged release chart:
 
 ```bash
-VERSION=0.2.0
+VERSION=0.3.0
 helm upgrade --install kctx \
   "https://github.com/lucasepe/kctx/releases/download/v${VERSION}/kctx-${VERSION}.tgz" \
   --namespace kctx-system \
@@ -102,16 +91,13 @@ kubectl -n kctx-system port-forward svc/kctx 8080:8080
 curl http://localhost:8080/health/namespace/default
 ```
 
-From a source checkout, install the local chart and choose the image tag to run:
-
-```bash
-helm upgrade --install kctx ./chart \
-  --namespace kctx-system \
-  --create-namespace \
-  --set image.tag=dev
-```
-
 See [chart/README.md](chart/README.md) for chart values, local kind setup, and NodePort examples.
+
+### MCP/SSE release test guide
+
+There is also an MCP/SSE release test guide for anyone who wants to try this with a local kind cluster, the released Helm chart, Online Boutique, ngrok, Codex, Claude Code, or ChatGPT Developer Mode:
+
+https://github.com/lucasepe/kctx/tree/main/docs/kctx-mcp-sse-release-test-guide.pdf
 
 ## Commands
 
