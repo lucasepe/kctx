@@ -73,7 +73,13 @@ cleanup() {
 trap cleanup EXIT
 
 echo "📦 Downloading $ASSET from $LATEST_TAG..."
-curl -fSL "$URL" -o "$ASSET"
+curl --fail --location --show-error \
+  --retry 5 \
+  --retry-all-errors \
+  --retry-delay 2 \
+  --connect-timeout 10 \
+  "$URL" \
+  -o "$ASSET"
 
 # Extract
 echo "📂 Extracting to $TMP_DIR..."

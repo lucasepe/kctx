@@ -20,6 +20,11 @@
 # Goreleaser builds
 **/dist/**
 
+# Generated documentation artifacts
+docs/mcp-sse/
+docs/assets/
+docs/build-mcp-sse.sh
+
 # This is my wip ideas folder
 experiments/**
 wip/**
