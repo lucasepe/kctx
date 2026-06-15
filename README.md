@@ -167,6 +167,21 @@ kctx serve
 curl http://localhost:8080/health/namespace/default
 ```
 
+Run the same engine as a local MCP server for AI agents:
+
+```bash
+kctx serve --mode mcp
+```
+
+Run it as an MCP HTTP/SSE server for controlled in-cluster or internal testing:
+
+```bash
+kctx serve --mode mcp-sse
+```
+
+See [MCP.md](MCP.md) for tool details and [docs/mcp-sse](docs/mcp-sse/01-overview.md)
+for the release-chart test guide with kind, Helm, ngrok, Codex, and Claude Code.
+
 ## CRD Adapters
 
 `kctx` can fetch arbitrary Kubernetes resources through discovery, but it does not pretend that every custom resource can be understood generically.

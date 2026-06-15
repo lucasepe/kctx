@@ -28,6 +28,13 @@ func ListenFlag(fs *flag.FlagSet) {
 	fs.String("listen", addr, "HTTP listen address")
 }
 
+// ServeModeFlag registers the serve surface selector. The default HTTP mode
+// preserves the historical behavior, while MCP mode exposes stdio tools.
+func ServeModeFlag(fs *flag.FlagSet) {
+	mode := xenv.Str("SERVE_MODE", "http")
+	fs.String("mode", mode, "serve mode: http, mcp, or mcp-sse")
+}
+
 func VerboseFlag(fs *flag.FlagSet) {
 	fs.Bool("verbose", xenv.True("VERBOSE"), "enable debug logging")
 }
@@ -190,6 +197,7 @@ func IsKnownFlag(command, arg string) bool {
 		return false
 	case "serve":
 		return arg == "--listen" || strings.HasPrefix(arg, "--listen=") ||
+			arg == "--mode" || strings.HasPrefix(arg, "--mode=") ||
 			arg == "--request-timeout" || strings.HasPrefix(arg, "--request-timeout=") ||
 			arg == "--kube-api-budget" || strings.HasPrefix(arg, "--kube-api-budget=") ||
 			arg == "--verbose" || strings.HasPrefix(arg, "--verbose=")

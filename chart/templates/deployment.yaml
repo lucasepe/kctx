@@ -38,6 +38,8 @@ spec:
           args:
             - serve
           env:
+            - name: SERVE_MODE
+              value: {{ .Values.env.mode | quote }}
             - name: LISTEN_ADDR
               value: {{ .Values.env.listenAddr | quote }}
             - name: REQUEST_TIMEOUT

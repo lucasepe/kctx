@@ -93,15 +93,42 @@ curl http://localhost:8888/version
 curl http://localhost:8888/health/namespace/default
 ```
 
+To expose MCP over HTTP/SSE instead of the default JSON HTTP API:
+
+```bash
+helm upgrade --install kctx ./chart \
+  --namespace kctx-system \
+  --create-namespace \
+  --set image.repository=kctx \
+  --set image.tag=kind \
+  --set image.pullPolicy=Never \
+  --set service.type=NodePort \
+  --set service.nodePort=30088 \
+  --set env.mode=mcp-sse \
+  --set env.requestTimeout=2m \
+  --set env.kubeAPIBudget=1000
+```
+
+The MCP SSE endpoint is available at:
+
+```text
+http://localhost:8888/mcp/sse
+```
+
+For larger clusters, increase `env.requestTimeout` and `env.kubeAPIBudget`.
+`requestTimeout` bounds one MCP tool call; `kubeAPIBudget` bounds Kubernetes API
+operations per tool call.
+
 ## Values
 
 The chart exposes the environment variables supported by `kctx serve`:
 
 ```yaml
 env:
+  mode: "http"              # SERVE_MODE: http, mcp, or mcp-sse
   listenAddr: ":8080"       # LISTEN_ADDR
-  requestTimeout: "30s"     # REQUEST_TIMEOUT
-  kubeAPIBudget: 100        # KUBE_API_BUDGET
+  requestTimeout: "30s"     # REQUEST_TIMEOUT per HTTP request or MCP tool call
+  kubeAPIBudget: 100        # KUBE_API_BUDGET per HTTP request or MCP tool call
   verbose: false            # VERBOSE
 ```
 
@@ -121,6 +148,11 @@ service:
 rbac:
   create: true
   clusterWide: true
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
 
 namespace:
   create: false

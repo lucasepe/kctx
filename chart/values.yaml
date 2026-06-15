@@ -26,6 +26,8 @@ podLabels: {}
 
 podSecurityContext:
   runAsNonRoot: true
+  runAsUser: 65532
+  runAsGroup: 65532
 
 securityContext:
   allowPrivilegeEscalation: false
@@ -35,6 +37,7 @@ securityContext:
   readOnlyRootFilesystem: true
 
 env:
+  mode: "http"
   listenAddr: ":8080"
   requestTimeout: "30s"
   kubeAPIBudget: 100

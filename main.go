@@ -53,7 +53,7 @@ func main() {
 	tool.Register(trace.Task(appName), "")
 	tool.Register(health.Task(appName), "")
 	tool.Register(dump.Task(appName), "")
-	tool.Register(serve.Task(appName), "")
+	tool.Register(serve.TaskWithVersion(appName, Version), "")
 
 	top.Parse(cmd.NormalizeArgs(os.Args[1:]))
 

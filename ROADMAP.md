@@ -15,7 +15,7 @@ humans, automation, and AI SRE agents.
 - [x] Add server observability: logs, request IDs, latency, health, metrics.
 - [ ] Harden packaging, container image, Helm chart, and release flow.
 - [x] Mature CRD adapter support beyond the first ArgoCD adapter.
-- [ ] Add an agent-friendly API surface, ideally MCP.
+- [ ] Add an agent-friendly API surface, ideally MCP. (Partial: MCP tools now cover the main `serve` context APIs, stdio transport, HTTP/SSE transport, Helm mode, and smoke-test client exist; production auth and client compatibility hardening remain open.)
 - [ ] Publish production deployment guidance. (Partial: install, serve, ArgoCD, adapter, and roadmap docs exist; production hardening guidance is still incomplete.)
 
 ## Roadmap Status Conventions
@@ -458,20 +458,92 @@ Current implementation notes:
 The goal is not broad CRD inventory. The goal is meaningful operational
 interpretation.
 
+## Future Design Note: Episodes
+
+Status: **Idea.** Episodes are a candidate fourth model layer above factual
+signals. They should group temporally related operational facts without
+claiming root cause, diagnosis, or remediation advice.
+
+The current core model is:
+
+- `entities`: what exists
+- `relations`: how resources are connected
+- `signals`: factual observations about current or recent state
+
+Episodes would add:
+
+- `episodes`: time-bounded groups of related signals and entities that describe
+  an operational situation
+
+Example shape:
+
+```json
+{
+  "kind": "ServiceDegradation",
+  "resourceId": "Service/payments/payments-api",
+  "startedAt": "2026-06-09T10:12:00Z",
+  "lastObservedAt": "2026-06-09T10:15:30Z",
+  "status": "open",
+  "severity": "error",
+  "signalReasons": [
+    "service_has_no_usable_backends",
+    "pod_crashloop",
+    "readiness_probe_failed"
+  ],
+  "entityIds": [
+    "Service/payments/payments-api",
+    "Pod/payments/payments-api-abc123"
+  ],
+  "source": "engine"
+}
+```
+
+Design constraints:
+
+- episodes are aggregations of evidence, not root-cause claims
+- every episode must be traceable to signal reasons, entities, and optionally
+  Kubernetes Events
+- avoid fields such as `cause`, `rootCause`, `diagnosis`, or `confidence`
+- names should describe observable situations, such as `ServiceDegradation`,
+  `WorkloadUnavailable`, `ApplicationDegradation`, or `CertificateIssuance`
+- generic Kubernetes episodes should be built by the core engine
+- domain-specific CRD episodes may be emitted by adapters when the CRD exposes
+  enough explicit status or temporal semantics
+
+Adapter support should be optional, for example through a future interface:
+
+```go
+type EpisodeAdapter interface {
+	Episodes(ctx context.Context, obj *unstructured.Unstructured) ([]model.Episode, error)
+}
+```
+
+This is intentionally not part of the current production-readiness bar. The
+near-term priority is to expose the existing stable context contract through an
+agent-friendly API surface before expanding the model.
+
 ## 10. Agent-Friendly API Surface
 
 Status: **Partial.** The JSON-only CLI/API contract is now much more
-agent-friendly, but MCP tools have not been implemented.
+agent-friendly, and an initial MCP surface exists for local stdio clients and
+controlled HTTP/SSE deployments. Production authentication, authorization,
+client compatibility, and remote exposure guidance still need hardening before
+this can be marked complete.
 
 The HTTP API is useful, but AI agents benefit from a tool-oriented API.
 
-Potential MCP tools:
+Initial MCP tools:
 
 - `get_namespace_health(namespace)`
-- `dump_namespace(namespace)`
 - `explain_resource(resource, namespace, name)`
 - `trace_service(namespace, name)`
-- `graph_resource(resource, namespace, name, render)`
+- `dump_namespace(namespace)`
+- `get_pod_graph(namespace, name)`
+
+Possible later MCP tools:
+
+- `graph_resource(resource, namespace, name)`
+- version or capability discovery as a tool, if real clients need it
 
 Design goals:
 
@@ -481,6 +553,41 @@ Design goals:
 - deterministic responses
 - explicit error codes
 - no speculative root-cause inference
+
+Implementation notes:
+
+- `kctx serve --mode mcp` exposes a local stdio MCP server
+- `kctx serve --mode mcp-sse` exposes MCP over HTTP/SSE with `/mcp/sse` and
+  `/mcp/message?sessionId=...`
+- MCP HTTP/SSE acknowledges POSTed messages quickly and dispatches tool calls
+  asynchronously; responses are delivered on the SSE stream
+- both transports reuse the existing engine instead of shelling out to the CLI
+- tool results preserve the same stable `kctx` JSON envelopes used by CLI and
+  HTTP responses
+- tool calls use the same redaction, timeout, budget, and error model paths as
+  the rest of `serve`
+- the default MCP tool set now covers namespace health, resource explanation,
+  service trace, Pod graph, and namespace dump
+- Helm supports `env.mode=mcp-sse` for controlled in-cluster tests
+- `internal/mcp/clienttest` provides a dependency-free development smoke-test
+  client for MCP HTTP/SSE
+- `MCP.md` points to the release-chart-first MCP/SSE guide as the public source
+  of truth
+- `docs/mcp-sse/` contains a release-chart-first MCP/SSE testing guide split
+  into short chapters for kind, Helm, ngrok, Codex, Claude Code, and community
+  feedback
+
+Remaining work before completion:
+
+- validate against real MCP hosts beyond the standalone smoke script and the
+  development client
+- decide whether to add Streamable HTTP in addition to SSE for newer clients
+- consider MCP progress notifications for long-running namespace or graph
+  operations
+- harden authentication and authorization for remote or shared deployments
+- document safe production exposure patterns and client compatibility notes
+- decide whether a generic `graph_resource` tool should complement the current
+  Pod graph tool
 
 MCP support would make `kctx` easier to plug into AI SRE workflows without
 custom wrappers.

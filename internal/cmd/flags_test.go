@@ -17,8 +17,8 @@ func TestNormalizeArgsKeepsServeVerboseAsBoolFlag(t *testing.T) {
 }
 
 func TestNormalizeArgsSupportsServeFlagValues(t *testing.T) {
-	got := NormalizeArgs([]string{"--kubeconfig", "dev.yaml", "serve", "--verbose", "--listen=:9090", "--request-timeout", "45s", "--kube-api-budget", "25"})
-	want := []string{"--kubeconfig", "dev.yaml", "serve", "--verbose", "--listen=:9090", "--request-timeout", "45s", "--kube-api-budget", "25"}
+	got := NormalizeArgs([]string{"--kubeconfig", "dev.yaml", "serve", "--mode", "mcp", "--verbose", "--listen=:9090", "--request-timeout", "45s", "--kube-api-budget", "25"})
+	want := []string{"--kubeconfig", "dev.yaml", "serve", "--mode", "mcp", "--verbose", "--listen=:9090", "--request-timeout", "45s", "--kube-api-budget", "25"}
 
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("NormalizeArgs() = %#v, want %#v", got, want)
