@@ -15,7 +15,7 @@ humans, automation, and AI SRE agents.
 - [x] Add server observability: logs, request IDs, latency, health, metrics.
 - [ ] Harden packaging, container image, Helm chart, and release flow.
 - [x] Mature CRD adapter support beyond the first ArgoCD adapter.
-- [ ] Add an agent-friendly API surface, ideally MCP. (Partial: MCP tools now cover the main `serve` context APIs, stdio transport, HTTP/SSE transport, Helm mode, and smoke-test client exist; production auth and client compatibility hardening remain open.)
+- [ ] Add an agent-friendly API surface, ideally MCP. (Partial: MCP tools now cover the main `serve` context APIs, stdio transport, Streamable HTTP, Helm mode, and smoke-test client exist; production auth and broader client compatibility hardening remain open.)
 - [ ] Publish production deployment guidance. (Partial: install, serve, ArgoCD, adapter, and roadmap docs exist; production hardening guidance is still incomplete.)
 
 ## Roadmap Status Conventions
@@ -526,7 +526,7 @@ agent-friendly API surface before expanding the model.
 
 Status: **Partial.** The JSON-only CLI/API contract is now much more
 agent-friendly, and an initial MCP surface exists for local stdio clients and
-controlled HTTP/SSE deployments. Production authentication, authorization,
+Streamable HTTP clients. Production authentication, authorization, broader
 client compatibility, and remote exposure guidance still need hardening before
 this can be marked complete.
 
@@ -557,10 +557,19 @@ Design goals:
 Implementation notes:
 
 - `kctx serve --mode mcp` exposes a local stdio MCP server
-- `kctx serve --mode mcp-sse` exposes MCP over HTTP/SSE with `/mcp/sse` and
-  `/mcp/message?sessionId=...`
-- MCP HTTP/SSE acknowledges POSTed messages quickly and dispatches tool calls
-  asynchronously; responses are delivered on the SSE stream
+- `kctx serve --mode mcp-http` exposes MCP over Streamable HTTP at `/mcp`
+- Streamable HTTP initializes sessions with `Mcp-Session-Id`; clients include
+  that header on subsequent `/mcp` requests and may terminate sessions with
+  `DELETE /mcp`
+- Streamable HTTP validates browser `Origin` headers, validates
+  `MCP-Protocol-Version` when present, and defaults local MCP HTTP serving to
+  `127.0.0.1:8080` unless `--listen` or `LISTEN_ADDR` is set
+- Streamable HTTP applies configurable request body, response, and
+  `structuredContent` size limits so large namespace results fail predictably
+  instead of exhausting clients or server memory
+- Streamable HTTP currently returns direct JSON responses to `POST /mcp`.
+  Server-to-client streams, resumability, retry redelivery, and `Last-Event-ID`
+  replay are intentionally not implemented in this iteration.
 - both transports reuse the existing engine instead of shelling out to the CLI
 - tool results preserve the same stable `kctx` JSON envelopes used by CLI and
   HTTP responses
@@ -568,20 +577,22 @@ Implementation notes:
   the rest of `serve`
 - the default MCP tool set now covers namespace health, resource explanation,
   service trace, Pod graph, and namespace dump
-- Helm supports `env.mode=mcp-sse` for controlled in-cluster tests
+- Helm supports `env.mode=mcp-http` for controlled in-cluster tests
 - `internal/mcp/clienttest` provides a dependency-free development smoke-test
-  client for MCP HTTP/SSE
-- `MCP.md` points to the release-chart-first MCP/SSE guide as the public source
-  of truth
-- `docs/mcp-sse/` contains a release-chart-first MCP/SSE testing guide split
-  into short chapters for kind, Helm, ngrok, Codex, Claude Code, and community
-  feedback
+  client for MCP Streamable HTTP
+- `MCP.md` documents the Streamable HTTP endpoint
+- `docs/mcp-sse/` contains a release-chart-first MCP testing guide split into
+  short chapters for kind, Helm, ngrok, Codex, Claude Code, ChatGPT, and
+  community feedback
 
 Remaining work before completion:
 
 - validate against real MCP hosts beyond the standalone smoke script and the
   development client
-- decide whether to add Streamable HTTP in addition to SSE for newer clients
+- validate `scripts/mcp-http-smoke.sh` against release-chart deployments
+- add Streamable HTTP resumability for long-running or large responses:
+  server-sent event responses, per-session event IDs, `Last-Event-ID` replay,
+  and safe retry semantics for disconnected clients
 - consider MCP progress notifications for long-running namespace or graph
   operations
 - harden authentication and authorization for remote or shared deployments

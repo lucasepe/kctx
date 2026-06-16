@@ -46,6 +46,12 @@ spec:
               value: {{ .Values.env.requestTimeout | quote }}
             - name: KUBE_API_BUDGET
               value: {{ .Values.env.kubeAPIBudget | quote }}
+            - name: MCP_MAX_REQUEST_BYTES
+              value: {{ .Values.env.mcpMaxRequestBytes | quote }}
+            - name: MCP_MAX_RESPONSE_BYTES
+              value: {{ .Values.env.mcpMaxResponseBytes | quote }}
+            - name: MCP_STRUCTURED_CONTENT_MAX_BYTES
+              value: {{ .Values.env.mcpStructuredContentMaxBytes | quote }}
             - name: VERBOSE
               value: {{ .Values.env.verbose | quote }}
           ports:

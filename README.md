@@ -93,9 +93,9 @@ curl http://localhost:8080/health/namespace/default
 
 See [chart/README.md](chart/README.md) for chart values, local kind setup, and NodePort examples.
 
-### MCP/SSE release test guide
+### MCP HTTP release test guide
 
-There is also an MCP/SSE release test guide for anyone who wants to try this with a local kind cluster, the released Helm chart, Online Boutique, ngrok, Codex, Claude Code, or ChatGPT Developer Mode:
+There is also an MCP HTTP release test guide for anyone who wants to try this with a local kind cluster, the released Helm chart, Online Boutique, ngrok, Codex, Claude Code, or ChatGPT Developer Mode. It covers the Streamable HTTP endpoint:
 
 https://github.com/lucasepe/kctx/tree/main/docs/kctx-mcp-sse-release-test-guide.pdf
 
@@ -159,11 +159,14 @@ Run the same engine as a local MCP server for AI agents:
 kctx serve --mode mcp
 ```
 
-Run it as an MCP HTTP/SSE server for controlled in-cluster or internal testing:
+Run it as an MCP Streamable HTTP server for controlled in-cluster or internal
+testing:
 
 ```bash
-kctx serve --mode mcp-sse
+kctx serve --mode mcp-http
 ```
+
+The MCP HTTP endpoint is `/mcp`.
 
 See [MCP.md](MCP.md) for tool details and [docs/mcp-sse](docs/mcp-sse/01-overview.md)
 for the release-chart test guide with kind, Helm, ngrok, Codex, and Claude Code.

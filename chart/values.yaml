@@ -41,6 +41,9 @@ env:
   listenAddr: ":8080"
   requestTimeout: "30s"
   kubeAPIBudget: 100
+  mcpMaxRequestBytes: 1048576
+  mcpMaxResponseBytes: 16777216
+  mcpStructuredContentMaxBytes: 1048576
   verbose: false
 
 containerPort: 8080

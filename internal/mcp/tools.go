@@ -134,12 +134,12 @@ func readOnlyAnnotations() map[string]any {
 	}
 }
 
-func successToolResult(value any) (toolResult, error) {
-	return jsonToolResult(value, false)
+func (s *Server) successToolResult(value any) (toolResult, error) {
+	return s.jsonToolResult(value, false)
 }
 
-func errorToolResult(err error) toolResult {
-	result, marshalErr := jsonToolResult(apperror.Envelope(err), true)
+func (s *Server) errorToolResult(err error) toolResult {
+	result, marshalErr := s.jsonToolResult(apperror.Envelope(err), true)
 	if marshalErr != nil {
 		return toolResult{
 			Content: []textContent{{
@@ -152,8 +152,8 @@ func errorToolResult(err error) toolResult {
 	return result
 }
 
-func badRequestToolResult(message string) toolResult {
-	result, marshalErr := jsonToolResult(model.NewErrorEnvelope(model.ErrorBadRequest, message), true)
+func (s *Server) badRequestToolResult(message string) toolResult {
+	result, marshalErr := s.jsonToolResult(model.NewErrorEnvelope(model.ErrorBadRequest, message), true)
 	if marshalErr != nil {
 		return toolResult{
 			Content: []textContent{{
@@ -166,17 +166,32 @@ func badRequestToolResult(message string) toolResult {
 	return result
 }
 
-func jsonToolResult(value any, isError bool) (toolResult, error) {
-	data, err := json.MarshalIndent(value, "", "  ")
+func (s *Server) jsonToolResult(value any, isError bool) (toolResult, error) {
+	data, err := json.Marshal(value)
 	if err != nil {
 		return toolResult{}, fmt.Errorf("encode tool result: %w", err)
 	}
-	return toolResult{
+	if !isError && s.maxToolResultBytes > 0 && int64(len(data)) > s.maxToolResultBytes {
+		envelope := model.NewErrorEnvelopeWithDetails(model.ErrorLimitExceeded, "MCP tool result exceeds max response bytes", map[string]string{
+			"maxBytes": fmt.Sprintf("%d", s.maxToolResultBytes),
+			"bytes":    fmt.Sprintf("%d", len(data)),
+		})
+		return s.jsonToolResult(envelope, true)
+	}
+
+	result := toolResult{
 		Content: []textContent{{
 			Type: "text",
 			Text: string(data),
 		}},
 		StructuredContent: value,
 		IsError:           isError,
-	}, nil
+	}
+	if !isError && s.structuredContentMaxBytes > 0 && int64(len(data)) > s.structuredContentMaxBytes {
+		result.Content = []textContent{{
+			Type: "text",
+			Text: fmt.Sprintf("Large structured result returned in structuredContent (%d bytes compact JSON).", len(data)),
+		}}
+	}
+	return result, nil
 }

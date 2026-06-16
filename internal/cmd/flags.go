@@ -29,10 +29,10 @@ func ListenFlag(fs *flag.FlagSet) {
 }
 
 // ServeModeFlag registers the serve surface selector. The default HTTP mode
-// preserves the historical behavior, while MCP mode exposes stdio tools.
+// preserves the historical behavior, while MCP modes expose agent tools.
 func ServeModeFlag(fs *flag.FlagSet) {
 	mode := xenv.Str("SERVE_MODE", "http")
-	fs.String("mode", mode, "serve mode: http, mcp, or mcp-sse")
+	fs.String("mode", mode, "serve mode: http, mcp, or mcp-http")
 }
 
 func VerboseFlag(fs *flag.FlagSet) {
@@ -47,6 +47,21 @@ func RequestTimeoutFlag(fs *flag.FlagSet) {
 func KubeAPIBudgetFlag(fs *flag.FlagSet) {
 	budget := xenv.Int("KUBE_API_BUDGET", 100)
 	fs.Int("kube-api-budget", budget, "Kubernetes API call budget per request; 0 disables it")
+}
+
+func MCPMaxRequestBytesFlag(fs *flag.FlagSet) {
+	value := xenv.Str("MCP_MAX_REQUEST_BYTES", "1048576")
+	fs.String("mcp-max-request-bytes", value, "MCP HTTP request body limit in bytes; 0 disables it")
+}
+
+func MCPMaxResponseBytesFlag(fs *flag.FlagSet) {
+	value := xenv.Str("MCP_MAX_RESPONSE_BYTES", "16777216")
+	fs.String("mcp-max-response-bytes", value, "MCP HTTP response limit in bytes; 0 disables it")
+}
+
+func MCPStructuredContentMaxBytesFlag(fs *flag.FlagSet) {
+	value := xenv.Str("MCP_STRUCTURED_CONTENT_MAX_BYTES", "1048576")
+	fs.String("mcp-structured-content-max-bytes", value, "MCP structuredContent limit in bytes; 0 always includes it")
 }
 
 func NamespaceValue(fs *flag.FlagSet) string {
@@ -86,6 +101,11 @@ func DurationValue(fs *flag.FlagSet, name string) (time.Duration, error) {
 func IntValue(fs *flag.FlagSet, name string) (int, error) {
 	value := StringValue(fs, name)
 	return strconv.Atoi(value)
+}
+
+func Int64Value(fs *flag.FlagSet, name string) (int64, error) {
+	value := StringValue(fs, name)
+	return strconv.ParseInt(value, 10, 64)
 }
 
 func CommandName(fs *flag.FlagSet) string {
@@ -200,6 +220,9 @@ func IsKnownFlag(command, arg string) bool {
 			arg == "--mode" || strings.HasPrefix(arg, "--mode=") ||
 			arg == "--request-timeout" || strings.HasPrefix(arg, "--request-timeout=") ||
 			arg == "--kube-api-budget" || strings.HasPrefix(arg, "--kube-api-budget=") ||
+			arg == "--mcp-max-request-bytes" || strings.HasPrefix(arg, "--mcp-max-request-bytes=") ||
+			arg == "--mcp-max-response-bytes" || strings.HasPrefix(arg, "--mcp-max-response-bytes=") ||
+			arg == "--mcp-structured-content-max-bytes" || strings.HasPrefix(arg, "--mcp-structured-content-max-bytes=") ||
 			arg == "--verbose" || strings.HasPrefix(arg, "--verbose=")
 	default:
 		return false

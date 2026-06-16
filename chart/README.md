@@ -93,7 +93,7 @@ curl http://localhost:8888/version
 curl http://localhost:8888/health/namespace/default
 ```
 
-To expose MCP over HTTP/SSE instead of the default JSON HTTP API:
+To expose MCP over Streamable HTTP instead of the default JSON HTTP API:
 
 ```bash
 helm upgrade --install kctx ./chart \
@@ -104,15 +104,15 @@ helm upgrade --install kctx ./chart \
   --set image.pullPolicy=Never \
   --set service.type=NodePort \
   --set service.nodePort=30088 \
-  --set env.mode=mcp-sse \
+  --set env.mode=mcp-http \
   --set env.requestTimeout=2m \
   --set env.kubeAPIBudget=1000
 ```
 
-The MCP SSE endpoint is available at:
+The primary MCP Streamable HTTP endpoint is available at:
 
 ```text
-http://localhost:8888/mcp/sse
+http://localhost:8888/mcp
 ```
 
 For larger clusters, increase `env.requestTimeout` and `env.kubeAPIBudget`.
@@ -125,10 +125,13 @@ The chart exposes the environment variables supported by `kctx serve`:
 
 ```yaml
 env:
-  mode: "http"              # SERVE_MODE: http, mcp, or mcp-sse
+  mode: "http"              # SERVE_MODE: http, mcp, or mcp-http
   listenAddr: ":8080"       # LISTEN_ADDR
   requestTimeout: "30s"     # REQUEST_TIMEOUT per HTTP request or MCP tool call
   kubeAPIBudget: 100        # KUBE_API_BUDGET per HTTP request or MCP tool call
+  mcpMaxRequestBytes: 1048576             # MCP_MAX_REQUEST_BYTES
+  mcpMaxResponseBytes: 16777216           # MCP_MAX_RESPONSE_BYTES
+  mcpStructuredContentMaxBytes: 1048576   # MCP_STRUCTURED_CONTENT_MAX_BYTES
   verbose: false            # VERBOSE
 ```
 
