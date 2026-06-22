@@ -1,10 +1,10 @@
 package mcp
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 // livez writes a minimal liveness response for Kubernetes probes.
@@ -33,25 +33,40 @@ func (s *HTTPServer) version(w http.ResponseWriter, r *http.Request) {
 
 // writeLimitedJSON writes a JSON response after enforcing the configured cap.
 func (s *HTTPServer) writeLimitedJSON(w http.ResponseWriter, value any) error {
-	var buf bytes.Buffer
-	enc := json.NewEncoder(&buf)
-	if err := enc.Encode(value); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_ = writeHTTPJSON(w, errorResponse(nil, invalidRequest, "encode MCP response", nil))
+	data, err := s.marshalLimitedJSON(value)
+	if err != nil {
+		s.writeJSONLimitError(w, err)
 		return err
 	}
-	if s.maxResponseBytes > 0 && int64(buf.Len()) > s.maxResponseBytes {
-		resp := errorResponse(nil, invalidRequest, "MCP response exceeds max response bytes", map[string]string{
-			"maxBytes": fmt.Sprintf("%d", s.maxResponseBytes),
-			"bytes":    fmt.Sprintf("%d", buf.Len()),
-		})
-		w.WriteHeader(http.StatusRequestEntityTooLarge)
-		_ = writeHTTPJSON(w, resp)
-		return fmt.Errorf("MCP response exceeds max response bytes: %d > %d", buf.Len(), s.maxResponseBytes)
-	}
 	w.Header().Set("Content-Type", "application/json")
-	_, err := w.Write(buf.Bytes())
+	_, err = w.Write(data)
 	return err
+}
+
+// marshalLimitedJSON encodes value as JSON after enforcing the configured cap.
+func (s *HTTPServer) marshalLimitedJSON(value any) ([]byte, error) {
+	data, err := json.Marshal(value)
+	if err != nil {
+		return nil, fmt.Errorf("encode MCP response: %w", err)
+	}
+	if s.maxResponseBytes > 0 && int64(len(data)) > s.maxResponseBytes {
+		return nil, fmt.Errorf("MCP response exceeds max response bytes: %d > %d", len(data), s.maxResponseBytes)
+	}
+	return data, nil
+}
+
+// writeJSONLimitError writes the JSON-RPC error response for a rejected response.
+func (s *HTTPServer) writeJSONLimitError(w http.ResponseWriter, err error) {
+	if strings.HasPrefix(err.Error(), "encode MCP response") {
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = writeHTTPJSON(w, errorResponse(nil, invalidRequest, "encode MCP response", nil))
+		return
+	}
+	resp := errorResponse(nil, invalidRequest, "MCP response exceeds max response bytes", map[string]string{
+		"maxBytes": fmt.Sprintf("%d", s.maxResponseBytes),
+	})
+	w.WriteHeader(http.StatusRequestEntityTooLarge)
+	_ = writeHTTPJSON(w, resp)
 }
 
 // writeHTTPJSON writes value as an application/json response.

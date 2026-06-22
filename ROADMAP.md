@@ -567,9 +567,12 @@ Implementation notes:
 - Streamable HTTP applies configurable request body, response, and
   `structuredContent` size limits so large namespace results fail predictably
   instead of exhausting clients or server memory
-- Streamable HTTP currently returns direct JSON responses to `POST /mcp`.
-  Server-to-client streams, resumability, retry redelivery, and `Last-Event-ID`
-  replay are intentionally not implemented in this iteration.
+- Streamable HTTP currently returns direct JSON responses to `POST /mcp` by
+  default, can return final JSON-RPC responses as SSE events when clients prefer
+  `text/event-stream`, and supports replay-only `GET /mcp` recovery for
+  retained events using `Last-Event-ID`. Live server-to-client stream
+  attachment, retry redelivery, and safe retry semantics are intentionally not
+  implemented in this iteration.
 - both transports reuse the existing engine instead of shelling out to the CLI
 - tool results preserve the same stable `kctx` JSON envelopes used by CLI and
   HTTP responses
@@ -590,9 +593,9 @@ Remaining work before completion:
 - validate against real MCP hosts beyond the standalone smoke script and the
   development client
 - validate `scripts/mcp-http-smoke.sh` against release-chart deployments
-- add Streamable HTTP resumability for long-running or large responses:
-  server-sent event responses, per-session event IDs, `Last-Event-ID` replay,
-  and safe retry semantics for disconnected clients
+- add full Streamable HTTP resumability for long-running or large responses:
+  background request jobs, live stream attachment, retry redelivery, and safe
+  retry semantics for disconnected clients
 - consider MCP progress notifications for long-running namespace or graph
   operations
 - harden authentication and authorization for remote or shared deployments

@@ -6,12 +6,15 @@ import (
 	"log/slog"
 	"net/http"
 	"time"
+
+	workqueue "github.com/lucasepe/kctx/internal/queue"
 )
 
 const (
 	streamableEndpointPath  = "/mcp"
 	mcpSessionIDHeader      = "Mcp-Session-Id"
 	mcpProtocolHeader       = "MCP-Protocol-Version"
+	lastEventIDHeader       = "Last-Event-ID"
 	corsAllowHeaders        = "Accept, Authorization, Content-Type, Last-Event-ID, Mcp-Session-Id, MCP-Protocol-Version"
 	corsExposeHeaders       = "Mcp-Session-Id, MCP-Protocol-Version"
 	streamableSessionTTL    = 30 * time.Minute
@@ -24,6 +27,11 @@ type HTTPServer struct {
 	server             *Server
 	logger             *slog.Logger
 	streamableSessions StreamableSessionStore
+	streams            StreamStore
+	streamEvents       StreamEventStore
+	streamEventIDs     StreamEventIDGenerator
+	streamRequests     StreamRequestStore
+	requestQueue       *workqueue.Queue
 	maxRequestBytes    int64
 	maxResponseBytes   int64
 	writeTimeout       time.Duration
@@ -53,6 +61,15 @@ func WithHTTPWriteTimeout(timeout time.Duration) HTTPOption {
 	}
 }
 
+// WithRequestQueue replaces the queue used for background Streamable HTTP jobs.
+func WithRequestQueue(q *workqueue.Queue) HTTPOption {
+	return func(s *HTTPServer) {
+		if q != nil {
+			s.requestQueue = q
+		}
+	}
+}
+
 // NewHTTPServer creates a Streamable HTTP transport for an MCP protocol server.
 func NewHTTPServer(server *Server, logger *slog.Logger, opts ...HTTPOption) *HTTPServer {
 	if logger == nil {
@@ -62,6 +79,11 @@ func NewHTTPServer(server *Server, logger *slog.Logger, opts ...HTTPOption) *HTT
 		server:             server,
 		logger:             logger,
 		streamableSessions: newMemoryStreamableSessionStore(streamableSessionTTL),
+		streams:            newMemoryStreamStore(streamableSessionTTL),
+		streamEvents:       newMemoryStreamEventStore(streamableSessionTTL),
+		streamEventIDs:     newMemoryStreamEventIDGenerator(),
+		streamRequests:     newMemoryStreamRequestStore(streamableSessionTTL),
+		requestQueue:       workqueue.New(64, 4),
 		maxRequestBytes:    defaultMaxRequestBytes,
 		maxResponseBytes:   defaultMaxResponseBytes,
 		writeTimeout:       defaultHTTPWriteTimeout(server),
@@ -71,6 +93,7 @@ func NewHTTPServer(server *Server, logger *slog.Logger, opts ...HTTPOption) *HTT
 			opt(s)
 		}
 	}
+	s.requestQueue.Run()
 	return s
 }
 
@@ -87,6 +110,7 @@ func (s *HTTPServer) Handler() http.Handler {
 
 // ListenAndServe starts the MCP HTTP server and shuts it down when ctx is canceled.
 func (s *HTTPServer) ListenAndServe(ctx context.Context, listen string) error {
+	defer s.requestQueue.Terminate()
 	httpServer := &http.Server{
 		Addr:              listen,
 		Handler:           s.Handler(),
